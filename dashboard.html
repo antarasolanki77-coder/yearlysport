@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Dashboard - Sports Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a; /* Slate 900 */
+            --glass-bg: rgba(30, 41, 59, 0.7); /* Slate 800 */
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-primary: #38bdf8; /* Sky 400 */
+            --accent-secondary: #f472b6; /* Pink 400 */
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: -webkit-linear-gradient(45deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-actions input {
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: white;
+            font-size: 0.95rem;
+            width: 300px;
+            outline: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        .header-actions input:focus {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 1.8rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+        }
+        .stat-card.c-total::before { background: var(--accent-primary); }
+        .stat-card.c-revenue::before { background: var(--success); }
+        .stat-card.c-pending::before { background: var(--warning); }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+        .stat-card h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .stat-card .value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0.8rem 0 0 0;
+        }
+        .value.revenue { color: var(--success); }
+        .value.pending { color: var(--warning); }
+        .value.total { color: var(--accent-primary); }
+
+        /* Table Section */
+        .table-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        th, td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.85rem;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr {
+            transition: background 0.2s ease;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        /* Status Badges */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge.paid { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge.pending { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        
+        .badge.plan-special { background: rgba(244, 114, 182, 0.15); color: #f9a8d4; border: 1px solid rgba(244, 114, 182, 0.3); }
+        .badge.plan-normal { background: rgba(56, 189, 248, 0.15); color: #7dd3fc; border: 1px solid rgba(56, 189, 248, 0.3); }
+
+        .btn-refresh {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid var(--glass-border);
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 15px;
+        }
+        .btn-refresh:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Dashboard Overview ✨</h1>
+        <div class="header-actions">
+            <!-- <button class="btn-refresh" onclick="alert('In a real app, this would refresh data from Google Sheets!')">🔄 Refresh Data</button> -->
+            <input type="text" id="searchInput" placeholder="🔍 Search by Name or UTR..." onkeyup="filterTable()">
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="stats-grid">
+        <div class="stat-card c-total">
+            <h3>Total Registrations</h3>
+            <p class="value total" id="stat-total">0</p>
+        </div>
+        <div class="stat-card c-revenue">
+            <h3>Total Revenue Collected</h3>
+            <p class="value revenue" id="stat-revenue">₹0</p>
+        </div>
+        <div class="stat-card c-pending">
+            <h3>Pending Verifications</h3>
+            <p class="value pending" id="stat-pending">0</p>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="table-container">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>Full name</th>
+                    <th>Date of birth</th>
+                    <th>Gender</th>
+                    <th>Contact Number</th>
+                    <th>Emergency Number</th>
+                    <th>Paln type(normal/spacial)</th>
+                    <th>Selected spoorts</th>
+                    <th>Totale Games</th>
+                    <th>Totale Amount</th>
+                    <th>Pyment Stutas</th>
+                    <th>Transaction ID (UTR)</th>
+                    <th>Submission Time</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data will be loaded here automatically via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function loadDashboard() {
+        let registrations = JSON.parse(localStorage.getItem("registrations") || "[]");
+        let tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+        
+        let totalRevenue = 0;
+        let pendingCount = 0;
+        
+        if (registrations.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: #94a3b8; padding: 2rem;">No registrations yet. Waiting for someone to submit the form...</td></tr>`;
+        }
+
+        registrations.forEach(reg => {
+            // extract amount number
+            let amountStr = reg["Totale Amount"] || "0";
+            let amountNum = parseInt(amountStr.replace(/[^0-9]/g, "")) || 0;
+            totalRevenue += amountNum;
+            
+            if (reg["Pyment Stutas"] !== "Verified") pendingCount++;
+            
+            let planHtml = reg["Paln type(normal/spacial)"] === "special" ? `<span class="badge plan-special">Special</span>` : `<span class="badge plan-normal">Normal</span>`;
+            let statusHtml = `<span class="badge pending">${reg["Pyment Stutas"]}</span>`;
+            if (reg["Pyment Stutas"] === "Verified") {
+                 statusHtml = `<span class="badge paid">${reg["Pyment Stutas"]}</span>`;
+            }
+
+            let tr = `<tr>
+                <td>${reg["Full name"]}</td>
+                <td>${reg["Date of birth"]}</td>
+                <td>${reg["Gender"]}</td>
+                <td>${reg["Contact Number"]}</td>
+                <td>${reg["Emergency Number"]}</td>
+                <td>${planHtml}</td>
+                <td>${reg["Selected spoorts"]}</td>
+                <td>${reg["Totale Games"]}</td>
+                <td style="font-weight: bold; color: #22c55e;">${reg["Totale Amount"]}</td>
+                <td>${statusHtml}</td>
+                <td style="font-family: monospace; color: #38bdf8;">${reg["Transaction ID (UTR)"]}</td>
+                <td>${reg["Submission Time"]}</td>
+            </tr>`;
+            tbody.innerHTML += tr;
+        });
+
+        document.getElementById("stat-total").innerText = registrations.length;
+        document.getElementById("stat-revenue").innerText = "₹" + totalRevenue;
+        document.getElementById("stat-pending").innerText = pendingCount;
+    }
+
+    // Load data when page loads
+    window.onload = loadDashboard;
+    
+    // Auto refresh dashboard every 2 seconds so user doesn't have to reload manually
+    setInterval(loadDashboard, 2000);
+    
+    // Also update if changes happen across tabs
+    window.addEventListener("storage", loadDashboard);
+
+    function filterTable() {
+        let input = document.getElementById("searchInput");
+        let filter = input.value.toLowerCase();
+        let table = document.getElementById("dataTable");
+        let tr = table.getElementsByTagName("tr");
+
+        for (let i = 1; i < tr.length; i++) {
+            // Ensure we don't hide the "No registrations yet" message accidentally if it exists without cells
+            if (tr[i].getElementsByTagName("td").length > 1) {
+                let rowText = tr[i].innerText.toLowerCase();
+                if (rowText.includes(filter)) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

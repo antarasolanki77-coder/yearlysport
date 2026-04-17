@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Registration & Dashboard</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ================= GLOBAL FORM CSS ================= */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        body.bg-form {
+            background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body.bg-dashboard {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            font-family: 'Inter', sans-serif;
+        }
+
+        #nav-bar {
+            text-align: right;
+            padding: 15px 20px;
+        }
+
+        #adminBtn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+        }
+
+        #adminBtn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .container {
+            max-width: 450px;
+            margin: 10px auto 40px auto;
+            background: rgba(30, 41, 59, 0.85);
+            padding: 25px;
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo {
+            text-align: center;
+        }
+
+        .logo img {
+            width: 120px;
+            border-radius: 50%;
+        }
+
+        h2 {
+            text-align: center;
+            color: #38bdf8;
+            margin-top: 10px;
+        }
+
+        h2.pink-theme {
+            color: #f472b6;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]),
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: none;
+            background: #334155;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        button.btn-submit {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #22c55e;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            color: white;
+        }
+
+        button.btn-submit:hover {
+            background: #16a34a;
+        }
+
+        .success {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #22c55e;
+        }
+
+        .sports-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .sports-box label {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sports-box input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        #error {
+            display: none;
+            text-align: center;
+            color: red;
+            margin-top: 10px;
+        }
+
+        .offer-box {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .offer-box h3 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .offer-details {
+            display: flex;
+            justify-content: space-around;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .offer-details span {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        #totalBox {
+            background: #334155;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+
+        #totalPrice {
+            color: #22c55e;
+            font-size: 22px;
+        }
+
+        /* ================= DASHBOARD CSS ================= */
+        #dashboard-section {
+            display: none;
+        }
+
+        .dashboard-container {
+            padding: 2rem;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .dashboard-header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            background: -webkit-linear-gradient(45deg, #38bdf8, #f472b6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions input {
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(30, 41, 59, 0.7);
+            color: white;
+            font-size: 0.95rem;
+            width: 300px;
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.8rem;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+
+        .stat-card.c-total::before {
+            background: #38bdf8;
+        }
+
+        .stat-card.c-revenue::before {
+            background: #22c55e;
+        }
+
+        .stat-card.c-pending::before {
+            background: #f59e0b;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card .value {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin: 0.8rem 0 0 0;
+        }
+
+        .value.revenue {
+            color: #22c55e;
+        }
+
+        .value.pending {
+            color: #f59e0b;
+        }
+
+        .value.total {
+            color: #38bdf8;
+        }
+
+        .table-container {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        th,
+        td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            white-space: nowrap;
+        }
+
+        th {
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.85rem;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.paid {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge.plan-special {
+            background: rgba(244, 114, 182, 0.15);
+            color: #f9a8d4;
+            border: 1px solid rgba(244, 114, 182, 0.3);
+        }
+
+        .badge.plan-normal {
+            background: rgba(56, 189, 248, 0.15);
+            color: #7dd3fc;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+    </style>
+</head>
+
+<body class="bg-form">
+
+    <div id="nav-bar">
+        <button id="adminBtn" onclick="toggleView()">⚙️ Admin Dashboard</button>
+    </div>
+
+    <!-- ================= FORM SECTION ================= -->
+    <div id="form-section">
+        <div class="container">
+            <div class="logo" id="logoHeader">
+                <img src="logo_no_green.png" alt="Sports Logo"
+                    onerror="this.src='https://via.placeholder.com/120?text=Logo'">
+            </div>
+            <h2 id="mainHeading">Yearly Sports Activities</h2>
+
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
+            <form id="form" action="https://formsubmit.co/sadhuyaksh2011@gmail.com" method="POST" target="hidden_iframe"
+                enctype="multipart/form-data">
+                <label>Full Name *</label>
+                <input type="text" name="Full_Name" required>
+
+                <label>Date of Birth *</label>
+                <input type="date" name="Date_Of_Birth" required>
+
+                <label>Gender *</label>
+                <select id="gender" name="Gender" required>
+                    <option value="">Select</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <label>Contact Number *</label>
+                <input type="tel" name="Contact_Number" pattern="[0-9]{10}" required>
+
+                <label>Emergency Contact Number *</label>
+                <input type="tel" name="Emergency_Contact_Number" pattern="[0-9]{10}" required>
+
+                <div class="offer-box">
+                    <h3>🎟️ Select Registration Plan 🎟️</h3>
+                    <div
+                        style="display: flex; flex-direction: column; gap: 10px; text-align: left; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <label style="cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+                            <input type="radio" name="planType" value="normal" checked
+                                style="margin-top: 5px; width: auto;">
+                            <span><strong>Normal Registration:</strong> Flat ₹50 per game</span>
+                        </label>
+                        <label style="cursor: pointer; display: flex; align-items: flex-start; gap: 10px;">
+                            <input type="radio" name="planType" value="special" style="margin-top: 5px; width: auto;">
+                            <span>
+                                <strong>🔥 Special Combo Offer:</strong> <br>
+                                <small style="color: #fde047;">1st Game: ₹50 | 2nd: +₹35 | 3rd: +₹20 | 4th onwards: +₹25
+                                    each</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="boysSection">
+                    <label style="color: #38bdf8; font-weight: bold;">Boys Sports *</label>
+                    <div class="sports-box">
+                        <label><input type="checkbox" name="sports" value="Cricket"> Cricket</label>
+                        <label><input type="checkbox" name="sports" value="Volleyball"> Volleyball</label>
+                        <label><input type="checkbox" name="sports" value="Kho-Kho"> Kho-Kho</label>
+                        <label><input type="checkbox" name="sports" value="Kabaddi"> Kabaddi</label>
+                        <label><input type="checkbox" name="sports" value="Relay Race"> Relay Race</label>
+                        <label><input type="checkbox" name="sports" value="Running Race"> Running Race</label>
+                        <label><input type="checkbox" name="sports" value="Tug of War"> Tug of War</label>
+                        <label><input type="checkbox" name="sports" value="Badminton"> Badminton</label>
+                    </div>
+                </div>
+
+                <div id="girlsSection">
+                    <label style="color: #f472b6; font-weight: bold;">Girls Sports *</label>
+                    <div class="sports-box">
+                        <label><input type="checkbox" name="girlsSports" value="Badminton"> Badminton</label>
+                        <label><input type="checkbox" name="girlsSports" value="Running Race"> Running Race</label>
+                        <label><input type="checkbox" name="girlsSports" value="Kho-Kho"> Kho-Kho</label>
+                        <label><input type="checkbox" name="girlsSports" value="Tug of War"> Tug of War</label>
+                        <label><input type="checkbox" name="girlsSports" value="Kabaddi"> Kabaddi</label>
+                    </div>
+                </div>
+
+                <label>Upload ID Proof (Aadhar Card) *</label>
+                <input type="file" name="Aadhar_ID_Proof" accept="image/*,.pdf" required>
+
+                <div id="totalBox">To Pay Amount: <span id="totalPrice">₹0</span></div>
+                <input type="hidden" name="Total_Amount_To_Pay" id="hiddenTotalAmount" value="₹0">
+                <input type="hidden" name="Total_Games" id="hiddenTotalGames" value="0">
+                <input type="hidden" name="Payment_Status" value="Verification Pending">
+
+                <div
+                    style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
+                    <h3 style="margin-top: 0; color: #38bdf8;">Scan & Pay</h3>
+                    <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px;">Please pay your total amount before
+                        submitting</p>
+                    <img id="upiQrCode"
+                        src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&amp;data=upi://pay?pa=vanshkhatwani2011@okhdfcbank%26pn=Vansh%26am=0%26cu=INR"
+                        alt="UPI QR Code"
+                        style="width: 150px; border-radius: 8px; margin: 10px 0; border: 4px solid #fff; background: white;">
+                    <p style="font-weight: bold; font-size: 18px; margin: 5px 0; color: #fff;">Vansh</p>
+                    <p style="font-size: 14px; margin: 0; color: #cbd5e1;">UPI ID: vanshkhatwani2011@okhdfcbank</p>
+                    <label style="text-align: left; margin-top: 15px; display: block;">Transaction ID / UTR Number
+                        *</label>
+                    <input type="text" name="Transaction_UTR_Number" placeholder="Enter 12-digit UTR number" required
+                        style="text-align: center;">
+
+                    <input type="hidden" name="_subject" value="New Sports Registration!">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                </div>
+
+                <button type="submit" class="btn-submit">Submit</button>
+                <p id="error">⚠ Please select at least one game</p>
+            </form>
+
+            <div class="success" id="successMsg"
+                style="font-size: 20px; font-weight: bold; background: rgba(34, 197, 94, 0.2); padding: 20px; border-radius: 8px; border: 1px solid #22c55e;">
+                ✅ Your registration confirmed and congratulations thank you!
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= DASHBOARD SECTION ================= -->
+    <div id="dashboard-section">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Dashboard Overview ✨</h1>
+                <div class="header-actions">
+                    <input type="text" id="searchInput" placeholder="🔍 Search by Name or UTR..."
+                        onkeyup="filterTable()">
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card c-total">
+                    <h3>Total Registrations</h3>
+                    <p class="value total" id="stat-total">0</p>
+                </div>
+                <div class="stat-card c-revenue">
+                    <h3>Total Revenue Collected</h3>
+                    <p class="value revenue" id="stat-revenue">₹0</p>
+                </div>
+                <div class="stat-card c-pending">
+                    <h3>Pending Verifications</h3>
+                    <p class="value pending" id="stat-pending">0</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Full name</th>
+                            <th>Date of birth</th>
+                            <th>Gender</th>
+                            <th>Contact Number</th>
+                            <th>Emergency Number</th>
+                            <th>Plan type</th>
+                            <th>Selected sports</th>
+                            <th>Total Games</th>
+                            <th>Total Amount</th>
+                            <th>Payment Status</th>
+                            <th>Transaction ID (UTR)</th>
+                            <th>Submission Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Data loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle View Logic
+        function toggleView() {
+            let formSec = document.getElementById("form-section");
+            let dashSec = document.getElementById("dashboard-section");
+            let adminBtn = document.getElementById("adminBtn");
+
+            if (formSec.style.display === "none") {
+                // Go to Form
+                formSec.style.display = "block";
+                dashSec.style.display = "none";
+                document.body.className = "bg-form";
+                adminBtn.innerHTML = "⚙️ Admin Dashboard";
+            } else {
+                // Go to Dashboard
+                let pass = prompt("Enter Admin Password (just hit OK for now):");
+                formSec.style.display = "none";
+                dashSec.style.display = "block";
+                document.body.className = "bg-dashboard";
+                adminBtn.innerHTML = "📝 Back to Form";
+                loadDashboard(); // Load data from localStorage
+            }
+        }
+
+        // Form Logic
+        function updateTotal() {
+            let plan = document.querySelector('input[name="planType"]:checked').value;
+            let selectedCount = document.querySelectorAll('.sports-box input[type="checkbox"]:checked').length;
+            let total = 0;
+
+            if (plan === "special") {
+                if (selectedCount === 1) total = 50;
+                else if (selectedCount === 2) total = 50 + 35;
+                else if (selectedCount === 3) total = 50 + 35 + 20;
+                else if (selectedCount >= 4) total = 105 + ((selectedCount - 3) * 25);
+            } else {
+                total = selectedCount * 50;
+            }
+
+            document.getElementById("totalPrice").innerText = "₹" + total;
+            document.getElementById("hiddenTotalAmount").value = "₹" + total;
+            document.getElementById("hiddenTotalGames").value = selectedCount;
+
+            let upiLink = `upi://pay?pa=vanshkhatwani2011@okhdfcbank&pn=Vansh&am=${total}&cu=INR`;
+
+            // Provide the fully encoded UPI link to the QR code generator so the scanned amount comes up automatically
+            let encodedUpiLink = encodeURIComponent(upiLink);
+            document.getElementById("upiQrCode").src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodedUpiLink}`;
+        }
+
+        document.querySelectorAll('input[name="planType"]').forEach(radio => {
+            radio.addEventListener("change", updateTotal);
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(box => {
+            box.addEventListener("change", updateTotal);
+        });
+
+        let submitted = false;
+
+        document.getElementById("form").addEventListener("submit", function (e) {
+            let fileInput = document.querySelector('input[name="Aadhar_ID_Proof"]');
+            if (fileInput.files.length > 0 && fileInput.files[0].size > 2 * 1024 * 1024) {
+                e.preventDefault();
+                alert("⚠ Error: Your Aadhar Card file is too large! Please compress it or select an image or PDF under 2MB. FormSubmit servers crash (500 Error) on large files.");
+                return;
+            }
+
+            let checked = document.querySelectorAll('input[type="checkbox"]:checked');
+            if (checked.length === 0) {
+                e.preventDefault();
+                document.getElementById("error").style.display = "block";
+                document.getElementById("successMsg").style.display = "none";
+            } else {
+                document.getElementById("error").style.display = "none";
+
+                // Save to browser storage for the dashboard
+                let formData = new FormData(document.getElementById("form"));
+                let selectedSports = [];
+                document.querySelectorAll('.sports-box input[type="checkbox"]:checked').forEach(cb => selectedSports.push(cb.value));
+
+                let existing = JSON.parse(localStorage.getItem("registrations") || "[]");
+                existing.push({
+                    "Full name": formData.get("Full_Name") || "",
+                    "Date of birth": formData.get("Date_Of_Birth") || "",
+                    "Gender": formData.get("Gender") || "",
+                    "Contact Number": formData.get("Contact_Number") || "",
+                    "Emergency Number": formData.get("Emergency_Contact_Number") || "",
+                    "Paln type(normal/spacial)": formData.get("planType") || "",
+                    "Selected spoorts": selectedSports.join(", "),
+                    "Totale Games": document.getElementById("hiddenTotalGames").value,
+                    "Totale Amount": document.getElementById("hiddenTotalAmount").value,
+                    "Pyment Stutas": formData.get("Payment_Status") || "Verification Pending",
+                    "Transaction ID (UTR)": formData.get("Transaction_UTR_Number") || "",
+                    "Submission Time": new Date().toLocaleString("en-IN")
+                });
+                localStorage.setItem("registrations", JSON.stringify(existing));
+
+                // Change submit button to show processing state
+                let submitBtn = document.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = "Processing...";
+
+                // Allow the normal form submission, which goes to the hidden iframe
+                submitted = true;
+            }
+        });
+
+        function handleIframeLoad() {
+            if (submitted) {
+                // Hide form and headers, show success message
+                document.getElementById("form").style.display = "none";
+                document.getElementById("logoHeader").style.display = "none";
+                document.getElementById("mainHeading").style.display = "none";
+                document.getElementById("successMsg").style.display = "block";
+
+                // Load the new data into the admin dashboard early
+                loadDashboard();
+
+                // Reset state so it doesn't trigger again
+                submitted = false;
+            }
+        }
+
+        // Dashboard Logic
+        function loadDashboard() {
+            let registrations = JSON.parse(localStorage.getItem("registrations") || "[]");
+            let tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+
+            let totalRevenue = 0;
+            let pendingCount = 0;
+
+            if (registrations.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="12" style="text-align: center; color: #94a3b8; padding: 2rem;">No registrations yet. Waiting for someone to submit the form...</td></tr>`;
+            }
+
+            registrations.forEach(reg => {
+                let amountStr = reg["Totale Amount"] || "0";
+                let amountNum = parseInt(amountStr.replace(/[^0-9]/g, "")) || 0;
+                totalRevenue += amountNum;
+
+                if (reg["Pyment Stutas"] !== "Verified") pendingCount++;
+
+                let planHtml = reg["Paln type(normal/spacial)"] === "special" ? `<span class="badge plan-special">Special</span>` : `<span class="badge plan-normal">Normal</span>`;
+                let statusHtml = `<span class="badge pending">${reg["Pyment Stutas"]}</span>`;
+                if (reg["Pyment Stutas"] === "Verified") {
+                    statusHtml = `<span class="badge paid">${reg["Pyment Stutas"]}</span>`;
+                }
+
+                let tr = `<tr>
+            <td>${reg["Full name"]}</td>
+            <td>${reg["Date of birth"]}</td>
+            <td>${reg["Gender"]}</td>
+            <td>${reg["Contact Number"]}</td>
+            <td>${reg["Emergency Number"]}</td>
+            <td>${planHtml}</td>
+            <td>${reg["Selected spoorts"]}</td>
+            <td>${reg["Totale Games"]}</td>
+            <td style="font-weight: bold; color: #22c55e;">${reg["Totale Amount"]}</td>
+            <td>${statusHtml}</td>
+            <td style="font-family: monospace; color: #38bdf8;">${reg["Transaction ID (UTR)"]}</td>
+            <td>${reg["Submission Time"]}</td>
+        </tr>`;
+                tbody.innerHTML += tr;
+            });
+
+            document.getElementById("stat-total").innerText = registrations.length;
+            document.getElementById("stat-revenue").innerText = "₹" + totalRevenue;
+            document.getElementById("stat-pending").innerText = pendingCount;
+        }
+
+        function filterTable() {
+            let input = document.getElementById("searchInput");
+            let filter = input.value.toLowerCase();
+            let table = document.getElementById("dataTable");
+            let tr = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < tr.length; i++) {
+                if (tr[i].getElementsByTagName("td").length > 1) {
+                    let rowText = tr[i].innerText.toLowerCase();
+                    if (rowText.includes(filter)) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+</body>
+
+</html>
